@@ -1,10 +1,14 @@
 (() => {
   const $counter = document.getElementById("js-counter");
-  const $plus2Button = document.querySelectorAll(".js-button")[3]; // 4番目のボタン（+2ボタン）を取得
+  const $plus2Button = document.getElementById("js-plus2-button"); // idで+2ボタンを取得
   let clickCount = 0;
   let firstClick = true;
 
-  // 初期状態で+2ボタンはHTMLですでに無効化されているため、再設定は不要
+  // 初期状態で+2ボタンが正しく無効化されているか確認
+  if (!$plus2Button) {
+    console.error("Error: +2 button not found.");
+    return; // ボタンが見つからない場合は処理を中断
+  }
 
   const clickHandler = (e) => {
     const $targetButton = e.currentTarget;
@@ -17,6 +21,12 @@
     }
 
     clickCount++;
+
+    // 200回目のクリック時に+2ボタンを有効化
+    if (clickCount === 200) {
+      alert("+2ボタンが押せるようになりました");
+      $plus2Button.disabled = false; // +2ボタンを有効にする
+    }
 
     // 特定のカウントに応じたアラート表示
     if (currentCount === 100) {
@@ -33,22 +43,17 @@
       alert("これが没頭ということですね。");
     }
 
-    // 200回目のクリック時に+2ボタンを有効化
-    if (clickCount === 200) {
-      alert("+2ボタンが押せるようになりました");
-      $plus2Button.disabled = false; // +2ボタンを有効にする
-    }
-
     // ボタンに応じたカウント処理
     if ($targetButton.textContent === "+") {
       $counter.textContent = currentCount + 1;
     } else if ($targetButton.textContent === "-") {
       $counter.textContent = currentCount - 1;
-    } else if ($targetButton.textContent === "+2") {
-      if (clickCount < 200) {
-        alert("200回クリックするまで押せません");
-      } else {
+    } else if ($targetButton.id === "js-plus2-button") {
+      // クリック数が200回以上である場合のみ+2ボタンが動作
+      if (clickCount >= 200) {
         $counter.textContent = currentCount + 2;
+      } else {
+        alert("200回クリックするまで押せません");
       }
     }
   };
